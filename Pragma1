@@ -1,0 +1,148 @@
+#include <iostream>
+#include <ctime>
+#include <math.h>
+using namespace std;
+const int MatrixSize = 9;
+void Menu();
+void FillMatrix(int** matrix, const int size);
+void PrintMatrix(int** matrix, const int size);
+void MultiplyElementsAfterMax(int** matrix, const int size);
+void SquareAndSort(int** matrix, const int size);
+void FindMaxElementInSegment(int** matrix, const int size);
+
+int main()
+{
+	setlocale(LC_ALL, "ru");
+	int** Matrix = new int* [MatrixSize];
+	for (int i = 0; i < MatrixSize; i++) {
+		Matrix[i] = new int[MatrixSize];
+	}
+	srand(time(NULL));
+	int choice = 0;
+	FillMatrix(Matrix, MatrixSize);
+	do {
+		Menu();
+		cin >> choice;
+		cout << endl;
+		switch (choice) {
+		case 1:
+			PrintMatrix(Matrix, MatrixSize);
+			system("pause");
+			system("cls");
+			break;
+		case 2:
+			MultiplyElementsAfterMax(Matrix, MatrixSize);
+			system("pause");
+			system("cls");
+			break;
+		case 3:
+			SquareAndSort(Matrix, MatrixSize);
+			system("pause");
+			system("cls");
+			break;
+		case 4:
+			FindMaxElementInSegment(Matrix, MatrixSize);
+			system("pause");
+			system("cls");
+			break;
+		default:
+			cout << "Ошибка при выборе пункта меню!\n";
+			break;
+		}
+	} while (choice);
+}
+
+
+void Menu() {
+	cout << "Меню:\n"
+		<< "1) Вывод матрицы\n"
+		<< "2) Вывод произведения элементов, идущих после максимального по модулю элемента\n"
+		<< "3) Замена отрицательных элементов и упорядочивание каждой строки по возростанию\n"
+		<< "4) Вывод максимальный элемента в сегменте\n"
+		<< "Ваш выбор »> ";
+}
+
+void FillMatrix(int** matrix, const int size)
+{
+	for (int i = 0; i < size; i++) {
+		for (int j = 0; j < size; j++) {
+			matrix[i][j] = rand() % (30 + 15 + 1) - 15;
+		}
+	}
+}
+
+void PrintMatrix(int** matrix, const int size)
+{
+	for (int i = 0; i < MatrixSize; i++) {
+		for (int j = 0; j < MatrixSize; j++) {
+			cout << matrix[i][j] << '\t';
+		}
+		cout << endl;
+	}
+	cout << endl;
+}
+
+void MultiplyElementsAfterMax(int** matrix, const int size)
+{
+	for (int j = 0; j < MatrixSize; j++) {
+		int MaxElement = 0;
+		int TempColumn = 0;
+		int result = 1;
+		for (int i = 0; i < MatrixSize; i++) {
+			if (abs(matrix[i][j]) > MaxElement) {
+				MaxElement = abs(matrix[i][j]);
+				TempColumn = i;
+			}
+		}
+		for (int i = TempColumn + 1; i < 9; i++) {
+			result *= matrix[i][j];
+		}
+		cout << result << " <- произведение элементов после максимального по модулю " << j + 1 << " столбца" << endl;
+	}
+	cout << endl;
+}
+
+void SquareAndSort(int** matrix, const int size)
+{
+	for (int i = 0; i < 9; i++) {
+		for (int j = 0; j < 9; j++) {
+			if (matrix[i][j] < 0) {
+				matrix[i][j] = pow((matrix[i][j]), 2);
+			}
+		}
+	}
+	for (int i = 0; i < size; i++)
+	{
+		for (int j = 0; j < size; j++)
+		{
+			for (int k = size - 1; k > j; k--)
+			{
+				if (matrix[i][k] < matrix[i][k - 1])
+				{
+					int TempValue = matrix[i][k];
+					matrix[i][k] = matrix[i][k - 1];
+					matrix[i][k - 1] = TempValue;
+				}
+			}
+		}
+	}
+	PrintMatrix(matrix, size);
+}
+
+void FindMaxElementInSegment(int** matrix, const int size)
+{
+	int MaxElementInSegment = 0;
+	for (int i = 0; i < size; i++) {
+		for (int j = 0; j < size; j++) {
+			if (i < j && i + j >= size) {
+				if (matrix[i][j] > MaxElementInSegment) {
+					MaxElementInSegment = matrix[i][j];
+				}
+				cout << matrix[i][j] << '\t';
+			}
+			else cout << '\t';
+		}
+		cout << endl;
+	}
+	cout << "\nМаксимальный элемент в данном сегменте - " << MaxElementInSegment << endl;
+}
